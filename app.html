@@ -1,0 +1,1005 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset="UTF-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+<title>PlantGram 🌿</title> 
+
+<style> 
+  /* Reset & base */ 
+  * { 
+    box-sizing: border-box; 
+  } 
+  body { 
+    margin: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background: #ffffff; 
+    color: #000000; 
+    min-height: 100vh; 
+  } 
+  /* Navbar */ 
+  header { 
+    position: fixed; 
+    top: 0; left: 0; right: 0; 
+    background: #3a6b35; 
+    color: #e9f5db; 
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center; 
+    height: 55px; 
+    font-weight: 600; 
+    font-size: 1.1rem; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+    z-index: 1000; 
+  } 
+  header nav a { 
+    color: #080204; 
+    text-decoration: none; 
+    cursor: pointer; 
+    padding: 8px 15px; 
+    border-radius: 6px; 
+    transition: background-color 0.3s; 
+  } 
+  header nav a:hover, 
+  header nav a.active { 
+    background: #a7d089; 
+    color: #4db727; 
+  } 
+  main { 
+    padding-top: 65px; 
+    max-width: 600px; 
+    margin: 0 auto 40px; 
+    min-height: calc(100vh - 65px); 
+  } 
+ 
+  /* Upload form */ 
+  #upload-post { 
+    background: white; 
+    margin: 15px 10px; 
+    border-radius: 12px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
+    padding: 16px; 
+    font-size: 0.95rem; 
+    color: #2d3a26; 
+  } 
+  #upload-post label { 
+    display: block; 
+    margin-bottom: 6px; 
+    font-weight: 600; 
+  } 
+  #upload-post input[type="file"], 
+  #upload-post input[type="text"] { 
+    width: 100%; 
+    padding: 8px 10px; 
+    border-radius: 8px; 
+    border: 1.5px solid #a4c639; 
+    margin-bottom: 12px; 
+    outline: none; 
+    font-size: 0.9rem; 
+    transition: border-color 0.3s; 
+  } 
+  #upload-post input[type="file"]:focus, 
+  #upload-post input[type="text"]:focus { 
+    border-color: #588a28; 
+  } 
+  #upload-post button { 
+    background: #588a28; 
+    border: none; 
+    color: white; 
+    padding: 10px 18px; 
+    border-radius: 20px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+  } 
+  #upload-post button:hover { 
+    background: #447a1b; 
+  } 
+  /* Post card */ 
+  .post { 
+    background: white; 
+    margin: 15px 10px; 
+    border-radius: 12px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
+    overflow: hidden; 
+    padding-bottom: 10px; 
+    transition: background-color 1.5s ease; 
+  } 
+  .post img, .post video { 
+    width: 100%; 
+    display: block; 
+    border-bottom: 1px solid #ddd; 
+    cursor: pointer; 
+    transition: transform 0.3s ease; 
+    border-radius: 0; 
+    max-height: 400px; 
+    object-fit: cover; 
+  } 
+  .post img:hover, 
+  .post video:hover { 
+    transform: scale(1.03); 
+  } 
+  .post-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    padding: 12px 16px 0 16px; 
+    font-weight: 600; 
+    color: #3a6b35; 
+  } 
+  .post-avatar { 
+    width: 34px; 
+    height: 34px; 
+    border-radius: 50%; 
+    background: #a7d089; 
+    color: #3a6b35; 
+    font-weight: 700; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    user-select: none; 
+    font-size: 1.1rem; 
+  } 
+  .post-username { 
+    font-size: 1rem; 
+  } 
+  .post-content { 
+    padding: 4px 16px 0 16px; 
+  } 
+  .caption { 
+    font-size: 0.95rem; 
+    margin-bottom: 8px; 
+    white-space: pre-wrap; 
+  } 
+  .actions { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    margin-bottom: 10px; 
+  } 
+  /* Plant shaped like button */ 
+  .like-btn { 
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    padding: 0; 
+    outline: none; 
+    display: flex; 
+    align-items: center; 
+  } 
+  .like-btn svg { 
+    width: 24px; 
+    height: 24px; 
+    fill: #6a994e; 
+    transition: fill 0.3s; 
+  } 
+  .like-btn.liked svg { 
+    fill: #379237; 
+    filter: drop-shadow(0 0 1.5px #2a6f2a); 
+  } 
+  .likes-count { 
+    font-size: 0.9rem; 
+    color: #558b2f; 
+  } 
+  .comments-count { 
+    font-size: 0.9rem; 
+    color: #558b2f; 
+  } 
+  /* Comment section */ 
+  .comments-section { 
+    padding: 0 16px; 
+    font-size: 0.9rem; 
+    color: #3b4a21; 
+  } 
+  .comment { 
+    margin-bottom: 6px; 
+    border-bottom: 1px solid #e0ebd7; 
+    padding-bottom: 4px; 
+  } 
+  .add-comment { 
+    display: flex; 
+    margin-top: 10px; 
+    gap: 8px; 
+  } 
+  .add-comment input[type="text"] { 
+    flex-grow: 1; 
+    padding: 6px 10px; 
+    border-radius: 20px; 
+    border: 1.5px solid #a4c639; 
+    outline: none; 
+    font-size: 0.9rem; 
+    transition: border-color 0.3s; 
+  } 
+  .add-comment input[type="text"]:focus { 
+    border-color: #588a28; 
+  } 
+  .add-comment button { 
+    background: #588a28; 
+    border: none; 
+    color: white; 
+    padding: 7px 14px; 
+    border-radius: 20px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+  } 
+  .add-comment button:hover { 
+    background: #447a1b; 
+  } 
+ 
+  /* Profile styles */ 
+  #profile-container { 
+    background: white; 
+    margin: 15px 10px; 
+    border-radius: 12px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
+    padding: 20px 24px; 
+    color: #2d3a26; 
+  } 
+  #profile-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 16px; 
+    margin-bottom: 24px; 
+  } 
+  #profile-avatar { 
+    width: 90px; 
+    height: 90px; 
+    border-radius: 50%; 
+    background: #a7d089; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    font-size: 2.5rem; 
+    color: #3a6b35; 
+    user-select: none; 
+  } 
+  #profile-username { 
+    font-size: 1.8rem; 
+    font-weight: 700; 
+  } 
+  #follow-info { 
+    display: flex; 
+    gap: 40px; 
+    font-size: 1.1rem; 
+    margin-bottom: 24px; 
+  } 
+  #follow-info div { 
+    font-weight: 600; 
+    color: #4a6a2c; 
+  } 
+  #followers-list, #following-list { 
+    margin-bottom: 20px; 
+  } 
+  #followers-list h3, #following-list h3 { 
+    margin-bottom: 10px; 
+    border-bottom: 2px solid #a7d089; 
+    padding-bottom: 4px; 
+    font-weight: 700; 
+    color: #3a6b35; 
+  } 
+  .user-list-item { 
+    padding: 6px 0; 
+    border-bottom: 1px solid #e0ebd7; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+  } 
+  .user-list-item:last-child { 
+    border-bottom: none; 
+  } 
+  .follow-toggle-btn { 
+    background: #588a28; 
+    border: none; 
+    color: white; 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+  } 
+  .follow-toggle-btn:hover { 
+    background: #447a1b; 
+  } 
+ 
+  /* Search profile section */ 
+  #search-profile-container { 
+    margin: 15px 10px 10px 10px; 
+    background: white; 
+    border-radius: 12px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
+    padding: 16px; 
+  } 
+  #search-profile-input { 
+    width: 100%; 
+    padding: 8px 12px; 
+    font-size: 1rem; 
+    border-radius: 8px; 
+    border: 1.5px solid #a4c639; 
+    outline: none; 
+    transition: border-color 0.3s; 
+  } 
+  #search-profile-input:focus { 
+    border-color: #588a28; 
+  } 
+  #search-results { 
+    margin-top: 6px; 
+    max-height: 120px; 
+    overflow-y: auto; 
+    border: 1px solid #a4c639; 
+    border-radius: 6px; 
+    background: #f5fbe8; 
+  } 
+  .search-result-item { 
+    padding: 8px 12px; 
+    cursor: pointer; 
+    border-bottom: 1px solid #a4c639; 
+  } 
+  .search-result-item:last-child { 
+    border-bottom: none; 
+  } 
+  .search-result-item:hover { 
+    background: #a7d089; 
+    color: #3a6b35; 
+  } 
+  #view-other-profile { 
+    margin: 15px 10px; 
+    background: white; 
+    border-radius: 12px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
+    padding: 20px 24px; 
+    color: #2d3a26; 
+  } 
+  #back-to-own-profile-btn { 
+    background: #447a1b; 
+    border: none; 
+    color: white; 
+    padding: 7px 14px; 
+    border-radius: 20px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    margin-top: 10px; 
+    transition: background-color 0.3s; 
+  } 
+  #back-to-own-profile-btn:hover { 
+    background: #335615; 
+  } 
+ 
+  /* Hide sections */ 
+  .hidden { 
+    display: none !important; 
+  } 
+
+  /* ===== ADDED: Game and Chat small tweaks (kept consistent) ===== */
+  /* Game */
+  #game-section { display:flex; gap:20px; padding:20px; }
+  #game-sidebar { width:240px; background:#f0f7ec; border-radius:8px; padding:14px; border:1px solid #dbeed2; }
+  #game-content { flex:1; background:white; border-radius:12px; padding:16px; box: shadow 5px; 3px 10px rgba(0,0,0,0.06); }
+  /* Chat */
+  #chat-section { display:flex; height:480px; background:#f5f9f4; border-radius:12px; overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.06); margin:15px 10px; }
+  #chat-users { width:200px; background:#eaf6e7; border-right:1px solid #d8efd2; overflow:auto; padding:0; }
+  .chat-user { padding:12px 14px; border-bottom:1px solid #d8efd2; cursor:pointer; }
+  .chat-user:hover { background:#dff0d8; }
+  #chat-window { flex:1; display:flex; flex-direction:column; }
+  #chat-messages { flex:1; padding:14px; overflow:auto; display:flex; flex-direction:column; gap:10px; }
+  .message { max-width:70%; padding:10px 12px; border-radius:12px; }
+  .message.sent { align-self:flex-end; background:#a7d089; color:#07320a; }
+  .message.received { align-self:flex-start; background:#d9edcf; color:#0a2b0b; }
+  #chat-input-container { border-top:1px solid #d8efd2; display:flex; padding:10px; }
+  #chat-input { flex:1; padding:10px 12px; border-radius:20px; border:1px solid #cfe9bd; outline:none; }
+</style> 
+</head> 
+
+<body> 
+
+<header> 
+  <nav> 
+    <a href="#" class="active" id="nav-home">Home</a> 
+    <a href="#" id="nav-feed">Feed</a> 
+    <a href="#" id="nav-profile">Profile</a> 
+    <!-- NEW: Game & Chat nav items -->
+    <a href="#" id="nav-game">Advice</a>
+    <a href="#" id="nav-chat">Chat</a>
+  </nav> 
+</header> 
+
+<main> 
+  <!-- Home section: upload + own posts --> 
+  <section id="home-section"> 
+    <section id="upload-post" aria-label="Upload new post"> 
+      <form id="upload-form"> 
+        <label for="media-input">Upload Image or Video</label> 
+        <input type="file" id="media-input" accept="image/*,video/*" required /> 
+        <label for="caption-input">Caption</label> 
+        <input type="text" id="caption-input" placeholder="Write a caption..." maxlength="200" /> 
+        <button type="submit">Post</button> 
+      </form> 
+    </section> 
+
+    <section id="user-posts-container" aria-live="polite" aria-atomic="true" aria-relevant="additions"> 
+      <!-- Your own posts here --> 
+    </section> 
+  </section> 
+
+  <!-- Feed section: all posts --> 
+  <section id="feed-section" class="hidden" aria-label="Public Feed"> 
+    <section id="feed-posts-container" aria-live="polite" aria-atomic="true" aria-relevant="additions"> 
+      <!-- All posts here --> 
+    </section> 
+  </section> 
+
+  <!-- Profile section --> 
+  <section id="profile-section" class="hidden" aria-label="User Profile and Search"> 
+    <!-- Search profiles (top) --> 
+    <div id="search-profile-container" role="search"> 
+      <input type="search" id="search-profile-input" placeholder="Search users by username..." aria-label="Search profiles" autocomplete="off" /> 
+      <div id="search-results" role="listbox" aria-label="Search results"></div> 
+    </div> 
+
+    <!-- Other user profile view from search --> 
+    <section id="view-other-profile" class="hidden" aria-live="polite" aria-atomic="true" aria-relevant="additions"> 
+      <h2 id="other-profile-username"></h2> 
+      <div id="other-follow-info" style="display:flex;gap:40px;margin-bottom:20px;"> 
+        <div><strong><span id="other-followers-count">0</span></strong> Followers</div> 
+        <div><strong><span id="other-following-count">0</span></strong> Following</div> 
+      </div> 
+      <div id="other-followers-list"><h3>Followers</h3><div id="other-followers-items"></div></div> 
+      <div id="other-following-list"><h3>Following</h3><div id="other-following-items"></div></div> 
+      <button id="back-to-own-profile-btn">Back to My Profile</button> 
+    </section> 
+
+    <!-- Own profile details --> 
+    <div id="profile-container" aria-label="Your Profile"> 
+      <div id="profile-header"> 
+        <div id="profile-avatar" aria-hidden="true">🌿</div> 
+        <div> 
+          <div id="profile-username">plantlover123</div> 
+        </div> 
+      </div> 
+
+      <div id="follow-info"> 
+        <div><strong><span id="followers-count">0</span></strong> Followers</div> 
+        <div><strong><span id="following-count">0</span></strong> Following</div> 
+      </div> 
+
+      <div id="followers-list"> 
+        <h3>Followers</h3> 
+        <div id="followers-items"></div> 
+      </div> 
+
+      <div id="following-list"> 
+        <h3>Following</h3> 
+        <div id="following-items"></div> 
+      </div> 
+    </div> 
+  </section> 
+
+  <!-- ===== NEW: Game section ===== -->
+  <section id="game-section" class="hidden" aria-label="Plant Game">
+    <aside id="game-sidebar">
+      <h3>Plant Game 🌱</h3>
+      <p>Ask the plant for its survival advice — it sounds helpful, but it's... creative.</p>
+      <button id="new-advice-btn">Get Plant Advice</button>
+    </aside>
+    <div id="game-content">
+      <div id="plant-advice">Press the button to get advice from the plant.</div>
+    </div>
+  </section>
+
+  <!-- ===== NEW: Chat section ===== -->
+  <section id="chat-section" class="hidden" aria-label="Chat with followers">
+    <div id="chat-users" aria-label="Followers list">
+      <!-- follower items injected here -->
+    </div>
+    <div id="chat-window" aria-label="Chat window">
+      <div id="chat-messages" role="log" aria-live="polite" aria-atomic="false"></div>
+      <div id="chat-input-container">
+        <input type="text" id="chat-input" placeholder="Type a message and press Enter..." aria-label="Message input" />
+      </div>
+    </div>
+  </section>
+</main> 
+
+<script> 
+  // Shared posts data (simulate a database) 
+  const posts = [ 
+    { id: 1, mediaType: 'image', mediaSrc: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80', caption: "My thriving Monstera Deliciosa 🌿 #plantlove", likes: 23, comments: [], likedByUser: false, owner: 'plantlover123' }, 
+    { id: 2, mediaType: 'image', mediaSrc: 'https://images.unsplash.com/photo-1468071174046-657d9d351a40?auto=format&fit=crop&w=600&q=80', caption: "Succulent Sunday vibes 🌵✨", likes: 37, comments: [], likedByUser: false, owner: 'plantlover123' }, 
+    { id: 3, mediaType: 'image', mediaSrc: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80', caption: "Peace Lily in full bloom 🌸", likes: 15, comments: [], likedByUser: false, owner: 'flora_fan' }, 
+    { id: 4, mediaType: 'video', mediaSrc: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm', caption: "Sunflowers dancing in the wind 🌻", likes: 42, comments: [], likedByUser: false, owner: 'cactus_queen' }, 
+  ]; 
+
+  // User profile data and all other users (simulate database) 
+  const allUsers = { 
+    'plantlover123': { username: 'plantlover123', followers: ['green_thumb', 'leafy_lover', 'succulent_sam'], following: ['flora_fan', 'cactus_queen'] }, 
+    'green_thumb': { username: 'green_thumb', followers: ['plantlover123'], following: ['succulent_sam'] }, 
+    'leafy_lover': { username: 'leafy_lover', followers: [], following: ['plantlover123', 'flora_fan'] }, 
+    'succulent_sam': { username: 'succulent_sam', followers: ['green_thumb'], following: [] }, 
+    'flora_fan': { username: 'flora_fan', followers: ['plantlover123', 'leafy_lover'], following: ['cactus_queen'] }, 
+    'cactus_queen': { username: 'cactus_queen', followers: ['flora_fan'], following: ['plantlover123'] }, 
+  }; 
+
+  const loggedInUsername = 'plantlover123'; 
+
+  // Current viewed profile (null means own) 
+  let currentViewedProfile = null; 
+
+  // DOM Elements 
+  const navHome = document.getElementById('nav-home'); 
+  const navFeed = document.getElementById('nav-feed'); 
+  const navProfile = document.getElementById('nav-profile'); 
+  const navGame = document.getElementById('nav-game'); 
+  const navChat = document.getElementById('nav-chat'); 
+
+  const homeSection = document.getElementById('home-section'); 
+  const feedSection = document.getElementById('feed-section'); 
+  const profileSection = document.getElementById('profile-section'); 
+  const gameSection = document.getElementById('game-section');
+  const chatSection = document.getElementById('chat-section');
+
+  const uploadForm = document.getElementById('upload-form'); 
+  const mediaInput = document.getElementById('media-input'); 
+  const captionInput = document.getElementById('caption-input'); 
+  const userPostsContainer = document.getElementById('user-posts-container'); 
+  const feedPostsContainer = document.getElementById('feed-posts-container'); 
+
+  const profileUsernameEl = document.getElementById('profile-username'); 
+  const followersCountEl = document.getElementById('followers-count'); 
+  const followingCountEl = document.getElementById('following-count'); 
+  const followersItemsEl = document.getElementById('followers-items'); 
+  const followingItemsEl = document.getElementById('following-items'); 
+
+  const searchInput = document.getElementById('search-profile-input'); 
+  const searchResultsEl = document.getElementById('search-results'); 
+
+  const viewOtherProfileSection = document.getElementById('view-other-profile'); 
+  const otherProfileUsernameEl = document.getElementById('other-profile-username'); 
+
+  const otherFollowersCountEl = document.getElementById('other-followers-count'); 
+  const otherFollowingCountEl = document.getElementById('other-following-count'); 
+  const otherFollowersItemsEl = document.getElementById('other-followers-items'); 
+  const otherFollowingItemsEl = document.getElementById('other-following-items'); 
+  const backToOwnProfileBtn = document.getElementById('back-to-own-profile-btn'); 
+
+  // Utility: create plant-shaped SVG for like button 
+  function createPlantSVG() { 
+    const svgNS = "http://www.w3.org/2000/svg"; 
+    const svg = document.createElementNS(svgNS, "svg"); 
+    svg.setAttribute("viewBox", "0 0 24 24"); 
+    svg.setAttribute("aria-hidden", "true"); 
+    svg.innerHTML = ` 
+      <path d="M12 2C9.243 5.134 7.5 7.5 7.5 10c0 2.49 3 6 4.5 6s4.5-3.51 4.5-6c0-2.5-1.743-4.866-4.5-8z" /> 
+    `; 
+    return svg; 
+  } 
+
+  // Render a single post card 
+  function renderPost(post, container, isUserPost = false) { 
+    const postEl = document.createElement('article'); 
+    postEl.className = 'post'; 
+    postEl.setAttribute('tabindex', '0'); 
+
+    // Post header: avatar + username 
+    const postHeader = document.createElement('div'); 
+    postHeader.className = 'post-header'; 
+    const avatar = document.createElement('div'); 
+    avatar.className = 'post-avatar'; 
+    avatar.textContent = post.owner.charAt(0).toUpperCase(); 
+    avatar.setAttribute('aria-hidden', 'true'); 
+    const username = document.createElement('div'); 
+    username.className = 'post-username'; 
+    username.textContent = post.owner; 
+    postHeader.appendChild(avatar); 
+    postHeader.appendChild(username); 
+
+    // Post media 
+    let mediaEl; 
+    if (post.mediaType === 'image') { 
+      mediaEl = document.createElement('img'); 
+      mediaEl.src = post.mediaSrc; 
+      mediaEl.alt = `Photo posted by ${post.owner}`; 
+    } else { 
+      mediaEl = document.createElement('video'); 
+      mediaEl.src = post.mediaSrc; 
+      mediaEl.setAttribute('controls', 'true'); 
+      mediaEl.setAttribute('aria-label', `Video posted by ${post.owner}`); 
+    } 
+
+    // Caption 
+    const caption = document.createElement('div'); 
+    caption.className = 'caption'; 
+    caption.textContent = post.caption; 
+
+    // Actions (like button + likes count) 
+    const actions = document.createElement('div'); 
+    actions.className = 'actions'; 
+    const likeBtn = document.createElement('button'); 
+    likeBtn.className = 'like-btn'; 
+    likeBtn.setAttribute('aria-label', 'Like post'); 
+    likeBtn.setAttribute('aria-pressed', post.likedByUser ? 'true' : 'false'); 
+    likeBtn.title = 'Like post'; 
+
+    const plantSVG = createPlantSVG(); 
+    likeBtn.appendChild(plantSVG); 
+    if (post.likedByUser) { 
+      likeBtn.classList.add('liked'); 
+    } 
+
+    likeBtn.addEventListener('click', () => { 
+      post.likedByUser = !post.likedByUser; 
+      post.likes += post.likedByUser ? 1 : -1; 
+      likeBtn.classList.toggle('liked'); 
+      likeBtn.setAttribute('aria-pressed', post.likedByUser ? 'true' : 'false'); 
+      likesCount.textContent = `${post.likes} likes`; 
+    }); 
+
+    const likesCount = document.createElement('div'); 
+    likesCount.className = 'likes-count'; 
+    likesCount.textContent = `${post.likes} likes`; 
+
+    actions.appendChild(likeBtn); 
+    actions.appendChild(likesCount); 
+
+    // Comments count (if any) 
+    if (post.comments.length > 0) { 
+      const commentsCount = document.createElement('div'); 
+      commentsCount.className = 'comments-count'; 
+      commentsCount.textContent = `${post.comments.length} comments`; 
+      actions.appendChild(commentsCount); 
+    } 
+
+    postEl.appendChild(postHeader); 
+    postEl.appendChild(mediaEl); 
+    postEl.appendChild(caption); 
+    postEl.appendChild(actions); 
+
+    container.appendChild(postEl); 
+  } 
+
+  // Render user own posts 
+  function renderUserPosts() { 
+    userPostsContainer.innerHTML = ''; 
+    const userPosts = posts.filter(p => p.owner === loggedInUsername); 
+    if (userPosts.length === 0) { 
+      userPostsContainer.textContent = "You haven't posted anything yet."; 
+    } else { 
+      userPosts.forEach(post => renderPost(post, userPostsContainer, true)); 
+    } 
+  } 
+
+  // Render feed posts (all posts) 
+  function renderFeedPosts() { 
+    feedPostsContainer.innerHTML = ''; 
+    posts.forEach(post => renderPost(post, feedPostsContainer)); 
+  } 
+
+  // Render profile info (own or others) 
+  function renderProfile(username) { 
+    if (!(username in allUsers)) { 
+      alert("User not found."); 
+      return; 
+    } 
+    currentViewedProfile = username; 
+
+    if (username === loggedInUsername) { 
+      // Show own profile details 
+      profileUsernameEl.textContent = username; 
+      followersCountEl.textContent = allUsers[username].followers.length; 
+      followingCountEl.textContent = allUsers[username].following.length; 
+
+      followersItemsEl.innerHTML = ''; 
+      allUsers[username].followers.forEach(follower => { 
+        const div = document.createElement('div'); 
+        div.className = 'user-list-item'; 
+        div.textContent = follower; 
+        followersItemsEl.appendChild(div); 
+      }); 
+
+      followingItemsEl.innerHTML = ''; 
+      allUsers[username].following.forEach(following => { 
+        const div = document.createElement('div'); 
+        div.className = 'user-list-item'; 
+        div.textContent = following; 
+        followingItemsEl.appendChild(div); 
+      }); 
+
+      // Hide other user profile view 
+      viewOtherProfileSection.classList.add('hidden'); 
+
+      // Show profile container and search area 
+      profileSection.querySelector('#profile-container').classList.remove('hidden'); 
+      document.getElementById('search-profile-container').style.display = 'block'; 
+
+    } else { 
+      // Show searched other user's profile inside viewOtherProfileSection 
+      const user = allUsers[username]; 
+      otherProfileUsernameEl.textContent = user.username; 
+      otherFollowersCountEl.textContent = user.followers.length; 
+      otherFollowingCountEl.textContent = user.following.length; 
+
+      otherFollowersItemsEl.innerHTML = ''; 
+      user.followers.forEach(follower => { 
+        const div = document.createElement('div'); 
+        div.className = 'user-list-item'; 
+        div.textContent = follower; 
+        otherFollowersItemsEl.appendChild(div); 
+      }); 
+
+      otherFollowingItemsEl.innerHTML = ''; 
+      user.following.forEach(following => { 
+        const div = document.createElement('div'); 
+        div.className = 'user-list-item'; 
+        div.textContent = following; 
+        otherFollowingItemsEl.appendChild(div); 
+      }); 
+
+      viewOtherProfileSection.classList.remove('hidden'); 
+      // Hide own profile container 
+      profileSection.querySelector('#profile-container').classList.add('hidden'); 
+      // Hide search results for clarity 
+      searchResultsEl.innerHTML = ''; 
+    } 
+  } 
+
+  // Search users by term 
+  function searchUsers(term) { 
+    const termLower = term.trim().toLowerCase(); 
+    if (!termLower) { 
+      searchResultsEl.innerHTML = ''; 
+      renderProfile(loggedInUsername); 
+      return; 
+    } 
+    const results = Object.keys(allUsers).filter(username => username.toLowerCase().includes(termLower)); 
+    renderSearchResults(results); 
+  } 
+
+  // Render search results dropdown 
+  function renderSearchResults(results) { 
+    searchResultsEl.innerHTML = ''; 
+    if (results.length === 0) { 
+      searchResultsEl.innerHTML = '<div class="search-result-item" aria-disabled="true">No users found</div>'; 
+      return; 
+    } 
+    results.forEach(username => { 
+      const item = document.createElement('div'); 
+      item.className = 'search-result-item'; 
+      item.textContent = username; 
+      item.setAttribute('role', 'option'); 
+      item.tabIndex = 0; 
+      item.addEventListener('click', () => { 
+        searchInput.value = username; 
+        searchResultsEl.innerHTML = ''; 
+        renderProfile(username); 
+      }); 
+      item.addEventListener('keydown', (e) => { 
+        if (e.key === 'Enter' || e.key === ' ') { 
+          e.preventDefault(); 
+          item.click(); 
+        } 
+      }); 
+      searchResultsEl.appendChild(item); 
+    }); 
+  } 
+
+  // Back button to own profile inside profile tab 
+  backToOwnProfileBtn.addEventListener('click', () => { 
+    searchInput.value = ''; 
+    searchResultsEl.innerHTML = ''; 
+    renderProfile(loggedInUsername); 
+  }); 
+
+  // Nav link handlers to switch sections 
+  function clearActiveNav() { 
+    // extended to handle new tabs
+    navHome.classList.remove('active'); 
+    navFeed.classList.remove('active'); 
+    navProfile.classList.remove('active'); 
+    if (navGame) navGame.classList.remove('active');
+    if (navChat) navChat.classList.remove('active');
+  } 
+  navHome.addEventListener('click', (e) => { 
+    e.preventDefault(); 
+    clearActiveNav(); 
+    navHome.classList.add('active'); 
+
+    homeSection.classList.remove('hidden'); 
+    feedSection.classList.add('hidden'); 
+    profileSection.classList.add('hidden'); 
+    gameSection.classList.add('hidden');
+    chatSection.classList.add('hidden');
+
+    renderUserPosts(); 
+  }); 
+  navFeed.addEventListener('click', (e) => { 
+    e.preventDefault(); 
+    clearActiveNav(); 
+    navFeed.classList.add('active'); 
+
+    homeSection.classList.add('hidden'); 
+    feedSection.classList.remove('hidden'); 
+    profileSection.classList.add('hidden'); 
+    gameSection.classList.add('hidden');
+    chatSection.classList.add('hidden');
+
+    renderFeedPosts(); 
+  }); 
+  navProfile.addEventListener('click', (e) => { 
+    e.preventDefault(); 
+    clearActiveNav(); 
+    navProfile.classList.add('active'); 
+
+    homeSection.classList.add('hidden'); 
+    feedSection.classList.add('hidden'); 
+    profileSection.classList.remove('hidden'); 
+    gameSection.classList.add('hidden');
+    chatSection.classList.add('hidden');
+
+    renderProfile(loggedInUsername); 
+  }); 
+
+  // ===== NEW: Game nav handler =====
+  navGame.addEventListener('click', (e) => {
+    e.preventDefault();
+    clearActiveNav();
+    navGame.classList.add('active');
+
+    homeSection.classList.add('hidden');
+    feedSection.classList.add('hidden');
+    profileSection.classList.add('hidden');
+    gameSection.classList.remove('hidden');
+    chatSection.classList.add('hidden');
+  });
+
+  // ===== NEW: Chat nav handler =====
+  navChat.addEventListener('click', (e) => {
+    e.preventDefault();
+    clearActiveNav();
+    navChat.classList.add('active');
+
+    homeSection.classList.add('hidden');
+    feedSection.classList.add('hidden');
+    profileSection.classList.add('hidden');
+    gameSection.classList.add('hidden');
+    chatSection.classList.remove('hidden');
+  });
+
+  // Upload post form submission handler 
+  uploadForm.addEventListener('submit', (e) => { 
+    e.preventDefault(); 
+    const file = mediaInput.files[0]; 
+    if (!file) { 
+      alert('Please select an image or video.'); 
+      return; 
+    } 
+    const caption = captionInput.value.trim(); 
+
+    const reader = new FileReader(); 
+    reader.onload = function(evt) { 
+      let mediaType = ''; 
+      if (file.type.startsWith('image/')) mediaType = 'image'; 
+      else if (file.type.startsWith('video/')) mediaType = 'video'; 
+      else { 
+        alert('Unsupported file type. Only images and videos allowed.'); 
+        return; 
+      } 
+      const newPost = { 
+        id: posts.length + 1, 
+        mediaType: mediaType, 
+        mediaSrc: evt.target.result, 
+        caption: caption, 
+        likes: 0, 
+        comments: [], 
+        likedByUser: false, 
+        owner: loggedInUsername 
+      }; 
+      posts.unshift(newPost); // Add newest at top 
+      renderUserPosts(); 
+      captionInput.value = ''; 
+      mediaInput.value = ''; 
+      alert('Post uploaded successfully!'); 
+    }; 
+    reader.readAsDataURL(file); 
+  }); 
+
+  // Search input event for profiles 
+  searchInput.addEventListener('input', () => { 
+    const val = searchInput.value.trim(); 
+    if (val === '') { 
+      searchResultsEl.innerHTML = ''; 
+      renderProfile(loggedInUsername); 
+    } else { 
+      searchUsers(val); 
+    } 
+  }); 
+
+  // Initial render: start on home with user posts 
+  renderUserPosts(); 
+
+  // ===== NEW: Game logic =====
+  const misleadingAdvice = [
+    "Water me with hot coffee daily — it keeps my leaves energized!",
+    "Place me in total darkness so I can rest forever.",
+    "Trim all my leaves; it helps me grow faster.",
+    "Pour sugar water on my roots for instant blooming.",
+    "Keep me next to a radiator for tropical warmth."
+  ];
+  const plantAdviceEl = document.getElementById('plant-advice');
+  const newAdviceBtn = document.getElementById('new-advice-btn');
+  if (newAdviceBtn) {
+    newAdviceBtn.addEventListener('click', () => {
+      const randomAdvice = misleadingAdvice[Math.floor(Math.random() * misleadingAdvice.length)];
+      plantAdviceEl.textContent = randomAdvice;
+    });
+  }
+
+  // ===== NEW: Chat logic =====
+  // Use your followers from allUsers[loggedInUsername].followers
+  const chatUsersContainer = document.getElementById('chat-users');
+  const chatMessagesContainer = document.getElementById('chat-messages');
+  const chatInput = document.getElementById('chat-input');
+  let activeChatUser = null;
+  const chatHistory = {}; // in-memory
+
+  function renderChatUsers() {
+    chatUsersContainer.innerHTML = '';
+    const followersList = (allUsers[loggedInUsername] && allUsers[loggedInUsername].followers) ? allUsers[loggedInUsername].followers : [];
+    followersList.forEach(user => {
+      const div = document.createElement('div');
+      div.className = 'chat-user';
+      div.textContent = user;
+      div.tabIndex = 0;
+      div.addEventListener('click', () => openChat(user));
+      div.addEventListener('keydown', (e) => { if (e.key === 'Enter') openChat(user); });
+      chatUsersContainer.appendChild(div);
+    });
+    if (followersList.length === 0) {
+      chatUsersContainer.innerHTML = '<div style="padding:12px;color:#4a6a2c">No followers to chat with.</div>';
+    }
+  }
+
+  function openChat(user) {
+    activeChatUser = user;
+    // clear messages view
+    chatMessagesContainer.innerHTML = '';
+    if (!chatHistory[user]) chatHistory[user] = [];
+    chatHistory[user].forEach(m => addMessageToUI(m.text, m.sender === loggedInUsername));
+  }
+
+  function addMessageToUI(text, sent) {
+    const msg = document.createElement('div');
+    msg.className = 'message ' + (sent ? 'sent' : 'received');
+    msg.textContent = text;
+    chatMessagesContainer.appendChild(msg);
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+  }
+
+  // Enter sends the message
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      if (!activeChatUser) {
+        alert('Select a follower to chat with from the left.');
+        return;
+      }
+      if (!chatHistory[activeChatUser]) chatHistory[activeChatUser] = [];
+      chatHistory[activeChatUser].push({ sender: loggedInUsername, text });
+      addMessageToUI(text, true);
+      chatInput.value = '';
+      // (Optional) simulate a simple auto-reply from follower after a short delay
+      setTimeout(() => {
+        const reply = `🌿 ${activeChatUser}: thanks for the message!`;
+        chatHistory[activeChatUser].push({ sender: activeChatUser, text: reply });
+        // only add if chat still open with same user
+        if (activeChatUser) addMessageToUI(reply, false);
+      }, 700);
+    }
+  });
+
+  // Render chat users initially
+  renderChatUsers();
+
+</script> 
+
+</body> 
+</html>
